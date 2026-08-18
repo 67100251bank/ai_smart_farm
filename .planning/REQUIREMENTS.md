@@ -100,43 +100,43 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SENS-01 | TBD | Pending |
-| SENS-02 | TBD | Pending |
-| SENS-03 | TBD | Pending |
-| DASH-01 | TBD | Pending |
-| DASH-02 | TBD | Pending |
-| DASH-03 | TBD | Pending |
-| AIAN-01 | TBD | Pending |
-| AIAN-02 | TBD | Pending |
-| AIAN-03 | TBD | Pending |
-| AIAN-04 | TBD | Pending |
-| AIAN-05 | TBD | Pending |
-| CTRL-01 | TBD | Pending |
-| CTRL-02 | TBD | Pending |
-| CTRL-03 | TBD | Pending |
-| CTRL-04 | TBD | Pending |
-| CTRL-05 | TBD | Pending |
-| CTRL-06 | TBD | Pending |
-| ALRT-01 | TBD | Pending |
-| ALRT-02 | TBD | Pending |
-| FAIL-01 | TBD | Pending |
-| FAIL-02 | TBD | Pending |
-| FAIL-03 | TBD | Pending |
-| FAIL-04 | TBD | Pending |
-| CV-01 | TBD | Pending |
-| CV-02 | TBD | Pending |
-| CV-03 | TBD | Pending |
-| CV-04 | TBD | Pending |
-| CV-05 | TBD | Pending |
-| SEC-01 | TBD | Pending |
-| SEC-02 | TBD | Pending |
-| SEC-03 | TBD | Pending |
+| SENS-01 | Phase 1 | Pending |
+| SENS-02 | Phase 1 | Pending |
+| SENS-03 | Phase 1 | Pending |
+| SEC-01 | Phase 1 | Pending |
+| SEC-02 | Phase 1 | Pending |
+| SEC-03 | Phase 1 | Pending |
+| DASH-01 | Phase 2 | Pending |
+| DASH-02 | Phase 2 | Pending |
+| DASH-03 | Phase 2 | Pending |
+| CTRL-01 | Phase 3 | Pending |
+| CTRL-02 | Phase 3 | Pending |
+| CTRL-03 | Phase 3 | Pending |
+| CTRL-04 | Phase 3 | Pending |
+| CTRL-05 | Phase 3 | Pending |
+| CTRL-06 | Phase 3 | Pending |
+| FAIL-02 | Phase 3 | Pending |
+| FAIL-03 | Phase 3 | Pending |
+| ALRT-01 | Phase 3 | Pending |
+| ALRT-02 | Phase 3 | Pending |
+| AIAN-01 | Phase 4 | Pending |
+| AIAN-02 | Phase 4 | Pending |
+| AIAN-03 | Phase 4 | Pending |
+| AIAN-04 | Phase 4 | Pending |
+| AIAN-05 | Phase 4 | Pending |
+| FAIL-01 | Phase 4 | Pending |
+| CV-01 | Phase 5 | Pending |
+| CV-02 | Phase 5 | Pending |
+| CV-03 | Phase 5 | Pending |
+| CV-04 | Phase 5 | Pending |
+| CV-05 | Phase 5 | Pending |
+| FAIL-04 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 31 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 31 ⚠️ (expected — roadmapper fills this in next)
+- Mapped to phases: 31 (100%)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-08-18*
-*Last updated: 2026-08-18 after initial definition*
+*Last updated: 2026-08-18 after roadmap creation (5 phases, full coverage)*
