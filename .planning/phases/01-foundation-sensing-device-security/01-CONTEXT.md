@@ -27,8 +27,13 @@ Greenhouse sensor data flows into the system securely, validated, and durably st
 ### User & role provisioning
 - **D-04:** No self-service signup for v1 — a single admin account is bootstrapped at deploy time (env-var or first-run setup), and that admin creates operator/viewer accounts via API. Matches the single-greenhouse, small-operator-team scope already set in PROJECT.md.
 
+### Resolved from 01-RESEARCH.md open questions (resumed session, no user available — accepted researcher's recommended default in each case, flagged as an explicit assumption rather than silently locked)
+- **D-05:** Humidity rate-of-change threshold set to 5%RH/10s, mirroring the temperature 5°C/10s number literally (SPEC.md B1 only says "same rule as A1" without repeating a number). — **Reversibility:** reversible — it's a config constant, not a schema/contract decision. **Flagged as [ASSUMPTION] pending domain-expert confirmation** — do not treat as final without follow-up.
+- **D-06:** TLS is terminated at a reverse proxy (nginx/Caddy) in front of Express, not by Express itself — Express trusts a documented `X-Forwarded-Proto` header and rejects non-HTTPS-forwarded requests; SEC-01's "TLS over every endpoint" is satisfied by the proxy + this trust boundary. — **Reversibility:** costly — switching to Express-terminated TLS later means adding `https.createServer` + cert/key management, a different code path. **Flagged as [ASSUMPTION]** — actual deployment target (bare VM vs. managed platform) was never specified in PROJECT.md; revisit if deployment target turns out to have no reverse proxy in front of it.
+- **D-07:** The `devices` table/auth mechanism is built device-type-generic now (`device_type` column, `sensor_type` nullable) so Phase 5's cameras can reuse it without a schema migration — matches D-03's "N sensor devices" generalization and SEC-03's phrasing covering both sensors and cameras.
+
 ### Claude's Discretion
-- Exact HMAC algorithm/nonce window sizing, and the specific TimescaleDB hypertable/continuous-aggregate configuration, are left to the researcher/planner — STACK.md already gives a strong default (HMAC-SHA256 + timestamp/nonce; TimescaleDB continuous aggregates for the 90-day-raw/2-year-hourly split).
+- Exact HMAC algorithm/nonce window sizing, and the specific TimescaleDB hypertable/continuous-aggregate configuration, are left to the researcher/planner — STACK.md already gives a strong default (HMAC-SHA256 + timestamp/nonce; TimescaleDB continuous aggregates for the 90-day-raw/2-year-hourly split). 01-RESEARCH.md has since resolved these concretely (HMAC-SHA256 over `method\npath\ntimestamp\nnonce\nrawBody`, 30s window, monotonic `last_accepted_ts` column; `sensor_readings` hypertable + `sensor_readings_hourly` continuous aggregate + two `add_retention_policy()` calls).
 
 </decisions>
 
@@ -41,6 +46,8 @@ Greenhouse sensor data flows into the system securely, validated, and durably st
 - `SPEC.md` (repo root) — the hardened original spec. §A1/B1 (sensor validation ranges/rate-of-change), §A3/B3 (retention windows), §Security (auth/TLS/device-auth/rate-limit requirements), §Edge Cases E1/E2 (sensor-fail/anomalous-value behavior) all apply directly to this phase. This is the authoritative source for every numeric threshold — do not re-derive them.
 - `.planning/REQUIREMENTS.md` — SENS-01/02/03, SEC-01/02/03 (this phase's requirement IDs)
 - `.planning/ROADMAP.md` §Phase 1 — goal + success criteria this phase must satisfy
+- `.planning/phases/01-foundation-sensing-device-security/01-RESEARCH.md` — resolved HMAC scheme, TimescaleDB schema, RBAC pattern, verified npm package versions; §Open Questions resolved into D-05/D-06/D-07 above
+- `.planning/phases/01-foundation-sensing-device-security/.edge-probe-coverage.json` — precomputed spec-less edge-probe report (no phase SPEC.md exists); planner must lift resolved items into `must_haves` per `references/specless-probe-fallback.md`
 
 ### Stack & architecture decisions (research-backed)
 - `.planning/research/STACK.md` — Node 22 LTS + Express 5 + PostgreSQL/TimescaleDB, per-device HMAC-signed payloads, device-auth pattern recommendation
