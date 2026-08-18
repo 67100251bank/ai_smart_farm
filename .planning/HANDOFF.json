@@ -12,19 +12,17 @@
     {"id": 1, "name": "gsd-new-project: PROJECT.md, config.json, research/ (STACK/FEATURES/ARCHITECTURE/PITFALLS/SUMMARY), REQUIREMENTS.md, ROADMAP.md", "status": "done", "commit": "a5a623e"},
     {"id": 2, "name": "gsd-discuss-phase 1 --auto: 01-CONTEXT.md + 01-DISCUSSION-LOG.md", "status": "done", "commit": "4375ee4"},
     {"id": 3, "name": "gsd-plan-phase 1 --auto: pre-flight gates (fixed UI-gate false positive, ran spec-less edge-probe fallback since no phase SPEC.md exists)", "status": "done", "commit": "73f2271"},
-    {"id": 4, "name": "gsd-plan-phase 1 --auto: spawn gsd-phase-researcher for 01-RESEARCH.md", "status": "in_progress", "progress": "Agent launched (background), no result yet when paused. Agent id known only to the launching session — on resume just re-run the plan-phase workflow's research step; it will pick up 01-RESEARCH.md if it landed, or re-spawn if not."}
+    {"id": 4, "name": "gsd-plan-phase 1 --auto: spawn gsd-phase-researcher for 01-RESEARCH.md", "status": "done", "progress": "Completed after pause (background). 01-RESEARCH.md written (58KB). Resolved: exact HMAC signing scheme (method+path+timestamp+nonce+rawBody, HMAC-SHA256, 30s window, monotonic last_accepted_ts column), exact TimescaleDB schema (sensor_readings hypertable + sensor_readings_hourly continuous aggregate + two retention policies), 12 npm packages version-verified live, RBAC middleware pattern. Open questions flagged (not silently resolved): humidity rate-of-change numeric threshold undefined in SPEC.md B1 (needs domain-expert input), TLS termination point (Express vs reverse proxy) unspecified, whether devices table should be device-type-generic now for Phase 5 cameras (researcher recommends yes)."}
   ],
   "remaining_tasks": [
-    {"id": 5, "name": "gsd-pattern-mapper (step 7.8) — only if RESEARCH.md exists", "status": "not_started"},
+    {"id": 5, "name": "gsd-pattern-mapper (step 7.8) — will run since RESEARCH.md now exists", "status": "not_started"},
     {"id": 6, "name": "Spawn gsd-planner (step 8) with CONTEXT.md + RESEARCH.md + edge-probe COVERAGE + security/threat-model contribution + MVP/tracer mode flags", "status": "not_started"},
     {"id": 7, "name": "Spawn gsd-plan-checker (step 10), revision loop up to 3 iterations", "status": "not_started"},
     {"id": 8, "name": "Requirements Coverage Gate (step 13) + Decision Coverage Gate (step 13a)", "status": "not_started"},
     {"id": 9, "name": "Commit plans (step 13d), then auto-advance to /gsd-execute-phase 1 --auto --no-transition", "status": "not_started"}
   ],
   "blockers": [],
-  "async_jobs": [
-    {"manifest": null, "job_id": "background Agent() call to gsd-phase-researcher (id not persisted outside the launching session)", "backend": "claude-code-subagent", "status": "running-or-completed-unknown", "submit_command": "Agent(subagent_type=\"gsd-phase-researcher\", ...) inside /gsd-plan-phase 1 --auto", "submitted_at": "2026-08-18T~08:5x", "expected_artifacts": [".planning/phases/01-foundation-sensing-device-security/01-RESEARCH.md"], "verification_command": "ls .planning/phases/01-foundation-sensing-device-security/01-RESEARCH.md", "resume_command": "/gsd-plan-phase 1 --auto"}
-  ],
+  "async_jobs": [],
   "human_actions_pending": [],
   "decisions": [
     {"decision": "SHT31-D combined temp+humidity sensor, HMAC-signed device payloads with anti-replay nonce/timestamp, admin-issued device registration (secret shown once)", "rationale": "Single sensor simplifies wiring/auth story; anti-replay closes the replay-attack gap PITFALLS.md flagged", "phase": "1"},
@@ -37,6 +35,6 @@
   "uncommitted_files": [
     ".planning/phases/01-foundation-sensing-device-security/.edge-probe-coverage.json (new, not yet committed — intentionally kept out of the docs commit since it's a working artifact for the planner, not a canonical GSD file)"
   ],
-  "next_action": "Run /gsd-plan-phase 1 --auto to resume. It will detect has_research (true if 01-RESEARCH.md landed while paused, false otherwise), spawn the researcher only if missing, then proceed through pattern-mapper -> planner -> checker -> coverage gates -> auto-advance to execute-phase. Pass the saved .edge-probe-coverage.json content into the planner's <specless_probe_fallback> COVERAGE block instead of re-running edge-probe (EDGE_ABSENT=1, PROHIB_ABSENT=1, SPECLESS_FALLBACK_DISABLED='').",
+  "next_action": "Run /gsd-plan-phase 1 --auto to resume. 01-RESEARCH.md already exists (research completed during the pause), so has_research=true and the researcher will NOT be re-spawned. Flow proceeds straight through pattern-mapper -> planner -> checker -> coverage gates -> auto-advance to execute-phase. Pass the saved .edge-probe-coverage.json content into the planner's <specless_probe_fallback> COVERAGE block instead of re-running edge-probe (EDGE_ABSENT=1, PROHIB_ABSENT=1, SPECLESS_FALLBACK_DISABLED=''). Before planning, resolve or explicitly defer the 3 open questions 01-RESEARCH.md flagged: humidity rate-of-change threshold (SPEC.md B1 ambiguous), TLS termination point, and whether the devices table should be device-type-generic now for Phase 5 cameras.",
   "context_notes": "Auto-mode chain is active (workflow._auto_chain_active=true, workflow.auto_advance=true) from /gsd-new-project --auto. This is a straight-line auto pipeline: new-project -> discuss-phase 1 -> plan-phase 1 -> execute-phase 1 -> (next phase discuss...). Nothing is blocked or waiting on the user except normal resumption. Security contribution hook is active (ASVS level 1, block_on=high) so each PLAN.md must include a <threat_model> block. MVP_MODE should resolve true (ROADMAP.md has **Mode:** mvp on every phase). TRACER_MODE defaults true (tracer-first slice). Repo is pushed to GitHub at https://github.com/67100251bank/ai_smart_farm (private), collaborator sudajaikaew invited (pending accept)."
 }
