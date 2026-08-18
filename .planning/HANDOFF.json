@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-08-18T08:59:45.052Z",
+  "phase": "1",
+  "phase_name": "Foundation — Sensing & Device Security",
+  "phase_dir": ".planning/phases/01-foundation-sensing-device-security",
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": 1, "name": "gsd-new-project: PROJECT.md, config.json, research/ (STACK/FEATURES/ARCHITECTURE/PITFALLS/SUMMARY), REQUIREMENTS.md, ROADMAP.md", "status": "done", "commit": "a5a623e"},
+    {"id": 2, "name": "gsd-discuss-phase 1 --auto: 01-CONTEXT.md + 01-DISCUSSION-LOG.md", "status": "done", "commit": "4375ee4"},
+    {"id": 3, "name": "gsd-plan-phase 1 --auto: pre-flight gates (fixed UI-gate false positive, ran spec-less edge-probe fallback since no phase SPEC.md exists)", "status": "done", "commit": "73f2271"},
+    {"id": 4, "name": "gsd-plan-phase 1 --auto: spawn gsd-phase-researcher for 01-RESEARCH.md", "status": "in_progress", "progress": "Agent launched (background), no result yet when paused. Agent id known only to the launching session — on resume just re-run the plan-phase workflow's research step; it will pick up 01-RESEARCH.md if it landed, or re-spawn if not."}
+  ],
+  "remaining_tasks": [
+    {"id": 5, "name": "gsd-pattern-mapper (step 7.8) — only if RESEARCH.md exists", "status": "not_started"},
+    {"id": 6, "name": "Spawn gsd-planner (step 8) with CONTEXT.md + RESEARCH.md + edge-probe COVERAGE + security/threat-model contribution + MVP/tracer mode flags", "status": "not_started"},
+    {"id": 7, "name": "Spawn gsd-plan-checker (step 10), revision loop up to 3 iterations", "status": "not_started"},
+    {"id": 8, "name": "Requirements Coverage Gate (step 13) + Decision Coverage Gate (step 13a)", "status": "not_started"},
+    {"id": 9, "name": "Commit plans (step 13d), then auto-advance to /gsd-execute-phase 1 --auto --no-transition", "status": "not_started"}
+  ],
+  "blockers": [],
+  "async_jobs": [
+    {"manifest": null, "job_id": "background Agent() call to gsd-phase-researcher (id not persisted outside the launching session)", "backend": "claude-code-subagent", "status": "running-or-completed-unknown", "submit_command": "Agent(subagent_type=\"gsd-phase-researcher\", ...) inside /gsd-plan-phase 1 --auto", "submitted_at": "2026-08-18T~08:5x", "expected_artifacts": [".planning/phases/01-foundation-sensing-device-security/01-RESEARCH.md"], "verification_command": "ls .planning/phases/01-foundation-sensing-device-security/01-RESEARCH.md", "resume_command": "/gsd-plan-phase 1 --auto"}
+  ],
+  "human_actions_pending": [],
+  "decisions": [
+    {"decision": "SHT31-D combined temp+humidity sensor, HMAC-signed device payloads with anti-replay nonce/timestamp, admin-issued device registration (secret shown once)", "rationale": "Single sensor simplifies wiring/auth story; anti-replay closes the replay-attack gap PITFALLS.md flagged", "phase": "1"},
+    {"decision": "Auth failures (bad signature/replay) are rejected outright (401 + security log, no write) — distinct from authenticated-but-out-of-range readings, which are flagged but retained", "rationale": "Conflating auth failure with data-quality flagging would let forged data get 'flagged' instead of rejected, defeating SEC-03", "phase": "1"},
+    {"decision": "Configurable N-devices-per-zone data model from day one (not hardcoded single sensor)", "rationale": "Phase 3's per-zone humidity target (CTRL-06) already needs a zone concept; avoids schema rework later", "phase": "1"},
+    {"decision": "No self-service signup — bootstrapped admin + admin-created operator/viewer accounts", "rationale": "Matches PROJECT.md's single-greenhouse, small-team scope", "phase": "1"},
+    {"decision": "Added '**UI hint**: no' to Phase 1's ROADMAP.md section", "rationale": "The UI-plan-gate keyword detector false-positived on the word 'view' inside 'view-only' (now reworded to 'read-only' too) — Phase 1 is pure backend/infra with no frontend surface", "phase": "1"},
+    {"decision": "No phase-specific 01-SPEC.md exists (never ran /gsd-spec-phase for this phase) — plan-phase's spec-less probe fallback fired: ran the deterministic edge-probe over SENS-01..03/SEC-01..03, producing 16 unresolved edge-coverage items (saved to .planning/phases/01-foundation-sensing-device-security/.edge-probe-coverage.json). The gsd-planner (not yet spawned) is responsible for applying the D-06 auto-resolution rules and authoring resolved items into must_haves, plus running its own in-prompt prohibition-recall pass (PROHIB_ABSENT=1).", "rationale": "Per gsd-core/references/specless-probe-fallback.md — must_haves cannot silently skip edge/prohibition coverage just because there's no phase SPEC.md", "phase": "1"}
+  ],
+  "uncommitted_files": [
+    ".planning/phases/01-foundation-sensing-device-security/.edge-probe-coverage.json (new, not yet committed — intentionally kept out of the docs commit since it's a working artifact for the planner, not a canonical GSD file)"
+  ],
+  "next_action": "Run /gsd-plan-phase 1 --auto to resume. It will detect has_research (true if 01-RESEARCH.md landed while paused, false otherwise), spawn the researcher only if missing, then proceed through pattern-mapper -> planner -> checker -> coverage gates -> auto-advance to execute-phase. Pass the saved .edge-probe-coverage.json content into the planner's <specless_probe_fallback> COVERAGE block instead of re-running edge-probe (EDGE_ABSENT=1, PROHIB_ABSENT=1, SPECLESS_FALLBACK_DISABLED='').",
+  "context_notes": "Auto-mode chain is active (workflow._auto_chain_active=true, workflow.auto_advance=true) from /gsd-new-project --auto. This is a straight-line auto pipeline: new-project -> discuss-phase 1 -> plan-phase 1 -> execute-phase 1 -> (next phase discuss...). Nothing is blocked or waiting on the user except normal resumption. Security contribution hook is active (ASVS level 1, block_on=high) so each PLAN.md must include a <threat_model> block. MVP_MODE should resolve true (ROADMAP.md has **Mode:** mvp on every phase). TRACER_MODE defaults true (tracer-first slice). Repo is pushed to GitHub at https://github.com/67100251bank/ai_smart_farm (private), collaborator sudajaikaew invited (pending accept)."
+}
