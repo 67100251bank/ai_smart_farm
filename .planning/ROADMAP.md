@@ -29,8 +29,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Temperature and humidity readings arrive roughly every 10s, and are only accepted from a device presenting a valid signed payload with anti-replay nonce/timestamp — forged or replayed payloads are rejected.
   2. Readings outside the plausible range (-10-60°C, 0-100% RH) or with an abnormal rate-of-change are flagged (not discarded) and still retained.
   3. Raw readings are queryable up to 90 days back; hourly aggregates are queryable up to 2 years back.
-  4. All sensor-ingest and control-command API endpoints require authentication over TLS, and actuator-control access is restricted to operator/admin roles (view-only for others).
+  4. All sensor-ingest and control-command API endpoints require authentication over TLS, and actuator-control access is restricted to operator/admin roles (read-only for others).
 **Plans**: TBD
+**UI hint**: no
 
 ### Phase 2: Real-Time Dashboard & Historical Trends
 **Goal**: Operators can see current and historical greenhouse conditions at a glance, with trustworthy staleness signaling.
