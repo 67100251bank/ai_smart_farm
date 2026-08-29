@@ -43,6 +43,8 @@
   var toast = null, toastAt = 0;
   var sheetOpen = false;
   var exportOpen = false;
+  var installPrompt = null;
+  var installedPWA = false;
   var lastSeenAlerts = 0;
   var formErr = '';
 
@@ -612,6 +614,7 @@
       Core.DEVICES.map(function (d) { return '<option value="' + d.id + '"' + (sc.actuatorFail === d.id ? ' selected' : '') + '>' + d.name + '</option>'; }).join('') +
       '</select></div></div>' +
 
+      installBlock() +
       '<div><div class="sec-title">ข้อมูล</div>' +
       '<div class="row" style="margin-top:8px"><button class="btn sm" data-act="export">' + (exportOpen ? 'ซ่อนข้อมูล JSON' : 'ดูข้อมูล JSON') + '</button>' +
       '<button class="btn sm ghost" data-act="reset">เริ่มการจำลองใหม่</button></div>' +
@@ -620,6 +623,35 @@
         '</textarea><div class="row" style="margin-top:7px"><button class="btn sm primary" data-act="copyJson">คัดลอกทั้งหมด</button></div>' : '') +
       '<p class="note" style="margin-top:8px">เก็บข้อมูลดิบย้อนหลัง ' + S.raw.length + ' รายการ และค่าเฉลี่ยราย 5 นาที ' + S.agg.length + ' รายการ ในเครื่องของคุณเท่านั้น</p></div>' +
       '<div class="row"><button class="btn primary" data-act="closeSheet" style="width:100%">ปิด</button></div>';
+  }
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+  function isStandalone() {
+    try {
+      return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    } catch (e) { return false; }
+  }
+  function installBlock() {
+    if (isStandalone() || installedPWA) {
+      return '<div><div class="sec-title">แอปบนเครื่อง</div>' +
+        '<p class="note" style="margin-top:8px">ติดตั้งลงเครื่องเรียบร้อยแล้ว — เปิดจากไอคอนบนหน้าจอโฮมได้เลย ' +
+        'และใช้งานได้แม้ไม่มีอินเทอร์เน็ต</p></div>';
+    }
+    if (installPrompt) {
+      return '<div><div class="sec-title">ติดตั้งลงเครื่อง</div>' +
+        '<p class="note" style="margin-top:8px">เพิ่มไอคอนแอปบนหน้าจอโฮม เปิดแบบเต็มจอ และใช้ได้แม้ไม่มีอินเทอร์เน็ต</p>' +
+        '<div class="row" style="margin-top:9px"><button class="btn sm primary" data-act="install">ติดตั้งแอป</button></div></div>';
+    }
+    if (isIOS()) {
+      return '<div><div class="sec-title">ติดตั้งลงเครื่อง (iPhone / iPad)</div>' +
+        '<p class="note" style="margin-top:8px">กดปุ่ม <b>แชร์</b> ที่แถบล่างของ Safari → เลื่อนหา <b>เพิ่มไปยังหน้าจอโฮม</b> → กด <b>เพิ่ม</b><br>' +
+        'จะได้ไอคอนแอปบนหน้าจอ เปิดแบบเต็มจอและใช้ได้แม้ไม่มีเน็ต</p></div>';
+    }
+    return '<div><div class="sec-title">ติดตั้งลงเครื่อง</div>' +
+      '<p class="note" style="margin-top:8px">บน Android เปิดด้วย Chrome แล้วกดเมนู ⋮ → <b>ติดตั้งแอป</b> หรือ <b>เพิ่มไปยังหน้าจอหลัก</b><br>' +
+      'ถ้ายังไม่ขึ้นตัวเลือกนี้ ให้เปิดหน้าเว็บค้างไว้สักครู่แล้วลองใหม่</p></div>';
   }
   function numField2(k, label, v) {
     return '<div class="field"><label for="th-' + k + '">' + esc(label) + '</label>' +
@@ -789,6 +821,15 @@
       } else say(done ? 'คัดลอกข้อมูล JSON แล้ว' : 'กดค้างในกล่องข้อความเพื่อคัดลอกเอง', done ? 'ok' : 'err');
       return;
     }
+    if (act === 'install') {
+      if (!installPrompt) { say('เบราว์เซอร์นี้ยังไม่พร้อมติดตั้ง — ดูวิธีติดตั้งด้วยมือในหน้านี้', 'err'); return; }
+      installPrompt.prompt();
+      installPrompt.userChoice.then(function (r) {
+        if (r && r.outcome === 'accepted') { installedPWA = true; say('ติดตั้งแอปลงเครื่องแล้ว', 'ok'); }
+        installPrompt = null; render();
+      });
+      return;
+    }
     if (act === 'reset') {
       S = Core.createState({ seed: (Date.now() % 100000) | 0 });
       try { localStorage.removeItem(KEY); } catch (err) {}
@@ -830,6 +871,12 @@
     } catch (e) {}
     S = load() || Core.createState({ seed: 20260827 });
     lastSeenAlerts = S.clock;
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault(); installPrompt = e; render();
+    });
+    window.addEventListener('appinstalled', function () {
+      installedPWA = true; installPrompt = null; say('ติดตั้งแอปลงเครื่องแล้ว', 'ok');
+    });
     document.addEventListener('pointerdown', function () { pointerDown = true; });
     document.addEventListener('pointerup', function () { pointerDown = false; });
     document.addEventListener('pointercancel', function () { pointerDown = false; });

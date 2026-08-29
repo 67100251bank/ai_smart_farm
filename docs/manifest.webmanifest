@@ -1,0 +1,20 @@
+{
+  "name": "AI Smart Mushroom Farm",
+  "short_name": "โรงเห็ด AI",
+  "description": "ระบบควบคุมสภาพแวดล้อมโรงเพาะเห็ดอัจฉริยะด้วย AI (โหมดจำลอง) — ทีม โจรสลัดพิกเซล",
+  "lang": "th",
+  "start_url": "./",
+  "scope": "./",
+  "id": "ai-smart-mushroom-farm",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#EDF1EE",
+  "theme_color": "#005F6B",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
